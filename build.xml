@@ -1,140 +1,128 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<project name="heros" default="jar">
-    <property file="ant.settings"/>
-    <target name="settings">
-        <fail
-            message="Please copy ant.settings.template to ant.settings, and set the variables in it."
-            unless="guava.jar"
-        />
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="heros">
+    <property environment="env"/>
+    <property name="soot.location" value="../soot"/>
+    <property name="soot-infoflow.location" value="../soot-infoflow"/>
+    <property name="testFlowDroid.location" value="../../../../media/joshua/ext4_backup/home/joshua/workspace/testFlowDroid"/>
+    <property name="ECLIPSE_HOME" value="../../Applications/eclipse-jee-luna/"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+    <path id="Plug-in Dependencies.libraryclasspath"/>
+    <path id="heros.classpath">
+        <path refid="Plug-in Dependencies.libraryclasspath"/>
+        <pathelement location="bin"/>
+        <pathelement location="guava-14.0.1.jar"/>
+        <pathelement location="slf4j-api-1.7.5.jar"/>
+        <pathelement location="junit.jar"/>
+        <pathelement location="org.hamcrest.core_1.3.0.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.uad"/>
+                <exclude name="**/*.ucd"/>
+                <exclude name="**/*.uld"/>
+                <exclude name="**/*.upd"/>
+                <exclude name="**/*.udd"/>
+                <exclude name="**/*.uod"/>
+                <exclude name="**/*.usd"/>
+                <exclude name="**/*.utd"/>
+                <exclude name="**/*.uud"/>
+                <exclude name="**/*.odd"/>
+                <exclude name="**/*.ead"/>
+                <exclude name="**/*.ecd"/>
+                <exclude name="**/*.eld"/>
+                <exclude name="**/*.epd"/>
+                <exclude name="**/*.edd"/>
+                <exclude name="**/*.eod"/>
+                <exclude name="**/*.esd"/>
+                <exclude name="**/*.etd"/>
+                <exclude name="**/*.eud"/>
+                <exclude name="**/*.urd"/>
+                <exclude name="**/*.uml"/>
+                <exclude name="**/*.ecore"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="test">
+                <exclude name="**/*.uad"/>
+                <exclude name="**/*.ucd"/>
+                <exclude name="**/*.uld"/>
+                <exclude name="**/*.upd"/>
+                <exclude name="**/*.udd"/>
+                <exclude name="**/*.uod"/>
+                <exclude name="**/*.usd"/>
+                <exclude name="**/*.utd"/>
+                <exclude name="**/*.uud"/>
+                <exclude name="**/*.odd"/>
+                <exclude name="**/*.ead"/>
+                <exclude name="**/*.ecd"/>
+                <exclude name="**/*.eld"/>
+                <exclude name="**/*.epd"/>
+                <exclude name="**/*.edd"/>
+                <exclude name="**/*.eod"/>
+                <exclude name="**/*.esd"/>
+                <exclude name="**/*.etd"/>
+                <exclude name="**/*.eud"/>
+                <exclude name="**/*.urd"/>
+                <exclude name="**/*.uml"/>
+                <exclude name="**/*.ecore"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
     </target>
-	
-	<target name="classesjar" depends="compile">
-    	<jar destfile="./herosclasses-${heros.version}.jar" manifest="META-INF/MANIFEST.MF">
-            <manifest>
-               <attribute name="Implementation-Version" value="${heros.version}"/> 
-            </manifest>
-            <fileset dir="./build/classes"/>
-        </jar>
+    <target name="clean">
+        <delete dir="bin"/>
     </target>
-    	
-	<target name="jar" depends="classesjar">
-    	<jar destfile="./heros-${heros.version}.jar" manifest="META-INF/MANIFEST.MF">
-            <manifest>
-               <attribute name="Implementation-Version" value="${heros.version}"/> 
-            </manifest>
-            <zipfileset src="./herosclasses-${heros.version}.jar"/>
-            <zipfileset src="${guava.jar}"/>
-            <zipfileset src="${slf4j-api.jar}"/>
-            <zipfileset src="${slf4j-simple.jar}"/>
-        </jar>
-    </target>
-
-	<target name="compile">
-    	<mkdir dir="build/classes"/>
-        <javac
-            destdir="build/classes"
-            debug="true"
-	    includeantruntime="true"
-            deprecation="on"
-        	source="1.5"
-        	target="1.5"
-        	fork="true"
-        	memorymaximumsize="512m"
-        >
-        	<classpath>
-        		<pathelement location="${guava.jar}"/>
-        		<pathelement location="${slf4j-api.jar}"/>
-        		<pathelement location="${slf4j-simple.jar}"/>
-        	</classpath>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
+            <src path="test"/>
+            <classpath refid="heros.classpath"/>
         </javac>
-	</target>
-
-	<target name="compiletests" depends="settings,compile">
-		<mkdir dir="build/testclasses" />
-		<javac srcdir="test" includeantruntime="true" source="1.7" target="1.7" destdir="build/testclasses" debug="true">
-			<classpath>
-				<pathelement location="build/classes" />
-	       		<pathelement location="${guava.jar}"/>
-        		<pathelement location="${junit.jar}"/>
-	       		<pathelement location="${hamcrest.jar}"/>
-	       		<pathelement location="${slf4j-api.jar}"/>
-	       		<pathelement location="${slf4j-simple.jar}"/>
-			</classpath>
-		</javac>
-	</target>
-
-	<target name="testjar" depends="settings,compiletests">
-
-	    	<jar destfile="./herostests-${heros.version}.jar" >
-	            <fileset dir="build/testclasses"/>
-	        </jar>
-
-	</target>
-
-	<target name="runtests" depends="compiletests">
-		<mkdir dir="reports" />
-		<junit printsummary="yes" fork="true" maxmemory="4G">
-			<classpath>
-        		<pathelement location="${guava.jar}"/>
-        		<pathelement location="${junit.jar}"/>
-	       		<pathelement location="${hamcrest.jar}"/>
-	       		<pathelement location="${slf4j-api.jar}"/>
-	       		<pathelement location="${slf4j-simple.jar}"/>
-	       		
-	       		<pathelement location="build/classes" />
-				<pathelement location="build/testclasses" />
-			</classpath>
-			
-			<jvmarg value="-ea" />
-			
-			<!-- Make stuff debuggable -->
-			<!--
-			<jvmarg value="-Xdebug" />
-			<jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5432" />
-			-->
-
-			<formatter type="xml" usefile="true" />
-			<batchtest todir="reports">
-				<!--
-					We only run our own tests. SecuriBench Micro relies on too much stuff
-					we exclude.
-				-->
-				<fileset dir="build/testclasses" includes="heros/**/*Test.class" />
-			</batchtest>
-		</junit>
-	</target>
-
-	<target name="reporttests" depends="runtests">
-		<junitreport tofile="TESTS-TestSuites.xml" todir="reports">
-			<fileset dir="reports">
-				<include name="TEST-*.xml" />
-			</fileset>
-			<report format="frames" todir="reports" />
-		</junitreport>
-	</target>
-    
-    <target name="javadoc">
-        <javadoc
-            classpath="build/classes"
-            sourcepath="src"
-			destdir="javadoc"
-            maxmemory="400m"
-            link="${javaapi.url}"
-            windowtitle="Heros API"
-            use="true"
-            useexternalfile="true"
-        >
-            <fileset dir="src" includes="**/*.java"/>
-        </javadoc>
-		<jar basedir="javadoc" destfile="herosjavadoc-${heros.version}.jar" />
-	</target>
-	
-	<target name="sourcejar">
-        <jar destfile="herossources-${heros.version}.jar">
-            <fileset dir="src"/>
-        </jar>
-	</target>
-
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
+        <ant antfile="build.xml" dir="${soot.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${soot.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${soot-infoflow.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${soot-infoflow.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+        <ant antfile="build.xml" dir="${testFlowDroid.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${testFlowDroid.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
+    </target>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
 </project>
