@@ -5,9 +5,10 @@
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="heros">
     <property environment="env"/>
+    <property name="revealdroid.location" value="../revealdroid"/>
     <property name="soot.location" value="../soot"/>
     <property name="soot-infoflow.location" value="../soot-infoflow"/>
-    <property name="testFlowDroid.location" value="../../../../media/joshua/ext4_backup/home/joshua/workspace/testFlowDroid"/>
+    <property name="uic_exploit_gen.location" value="../../../../media/joshua/ext4_backup/home/joshua/workspace/uic_exploit_gen"/>
     <property name="ECLIPSE_HOME" value="../../Applications/eclipse-jee-luna/"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.7"/>
@@ -93,6 +94,12 @@
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
+        <ant antfile="build.xml" dir="${revealdroid.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${revealdroid.location}" inheritAll="false" target="build">
+            <propertyset>
+                <propertyref name="build.compiler"/>
+            </propertyset>
+        </ant>
         <ant antfile="build.xml" dir="${soot.location}" inheritAll="false" target="clean"/>
         <ant antfile="build.xml" dir="${soot.location}" inheritAll="false" target="build">
             <propertyset>
@@ -105,8 +112,8 @@
                 <propertyref name="build.compiler"/>
             </propertyset>
         </ant>
-        <ant antfile="build.xml" dir="${testFlowDroid.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${testFlowDroid.location}" inheritAll="false" target="build">
+        <ant antfile="build.xml" dir="${uic_exploit_gen.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${uic_exploit_gen.location}" inheritAll="false" target="build">
             <propertyset>
                 <propertyref name="build.compiler"/>
             </propertyset>
