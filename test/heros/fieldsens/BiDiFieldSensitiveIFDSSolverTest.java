@@ -8,7 +8,23 @@
  * Contributors:
  *     Johannes Lerch - initial API and implementation
  ******************************************************************************/
-package heros;
+package heros.fieldsens;
+
+import static heros.utilities.FieldSensitiveTestHelper.callSite;
+import static heros.utilities.FieldSensitiveTestHelper.exitStmt;
+import static heros.utilities.FieldSensitiveTestHelper.flow;
+import static heros.utilities.FieldSensitiveTestHelper.kill;
+import static heros.utilities.FieldSensitiveTestHelper.normalStmt;
+import static heros.utilities.FieldSensitiveTestHelper.over;
+import static heros.utilities.FieldSensitiveTestHelper.startPoints;
+import static heros.utilities.FieldSensitiveTestHelper.times;
+import static heros.utilities.FieldSensitiveTestHelper.to;
+import heros.utilities.FieldSensitiveTestHelper;
+import heros.utilities.FieldSensitiveTestHelper.TabulationProblemExchange;
+import heros.utilities.Statement;
+import heros.utilities.TestDebugger;
+import heros.utilities.TestFact;
+import heros.utilities.TestMethod;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -20,21 +36,20 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.Lists;
 
-import static heros.utilities.TestHelper.*;
-import heros.utilities.TestHelper;
-import heros.utilities.TestHelper.TabulationProblemExchange;
 
 @RunWith(Parameterized.class)
-public class BiDiIFDSSolverTest {
+public class BiDiFieldSensitiveIFDSSolverTest {
 
-	private TestHelper forwardHelper;
-	private TestHelper backwardHelper;
+	private FieldSensitiveTestHelper forwardHelper;
+	private FieldSensitiveTestHelper backwardHelper;
 	private TabulationProblemExchange exchange;
+	private TestDebugger<String, TestFact, Statement, TestMethod> debugger;
 	
-	public BiDiIFDSSolverTest(TabulationProblemExchange exchange) {
+	public BiDiFieldSensitiveIFDSSolverTest(TabulationProblemExchange exchange) {
 		this.exchange = exchange;
-		forwardHelper = new TestHelper();
-		backwardHelper = new TestHelper();
+		debugger = new TestDebugger<String, TestFact, Statement, TestMethod>();
+		forwardHelper = new FieldSensitiveTestHelper(debugger);
+		backwardHelper = new FieldSensitiveTestHelper(debugger);
 	}
 
 	@Parameters(name="{0}")
@@ -71,7 +86,8 @@ public class BiDiIFDSSolverTest {
 				exitStmt("c").returns(over("y"), to("z"), flow("1", "2")));
 		
 		forwardHelper.method("bar",
-				startPoints(),
+				startPoints("y"),
+				normalStmt("y").succ("z"),
 				exitStmt("z").expectArtificalFlow(kill("2")));
 		
 		backwardHelper.method("foo",
@@ -81,7 +97,8 @@ public class BiDiIFDSSolverTest {
 				exitStmt("a").returns(over("y"), to("x"), flow("2", "3")));
 		
 		backwardHelper.method("bar",
-				startPoints(),
+				startPoints("y"),
+				normalStmt("y").succ("x"),
 				exitStmt("x").expectArtificalFlow(kill("3")));
 		
 		forwardHelper.runBiDiSolver(backwardHelper, exchange, "b");
@@ -97,6 +114,7 @@ public class BiDiIFDSSolverTest {
 		
 		forwardHelper.method("bar",
 				startPoints(),
+				normalStmt("y1").succ("z"),
 				exitStmt("z").expectArtificalFlow(/*none*/));
 		
 		backwardHelper.method("foo",
@@ -107,6 +125,7 @@ public class BiDiIFDSSolverTest {
 		
 		backwardHelper.method("bar",
 				startPoints(),
+				normalStmt("y2").succ("x"),
 				exitStmt("x").expectArtificalFlow(/*none*/));
 		
 		forwardHelper.runBiDiSolver(backwardHelper, exchange, "b");
@@ -122,6 +141,7 @@ public class BiDiIFDSSolverTest {
 		
 		forwardHelper.method("bar",
 				startPoints(),
+				normalStmt("y").succ("z"),
 				exitStmt("z").expectArtificalFlow(/*none*/));
 		
 		backwardHelper.method("foo",
@@ -132,6 +152,7 @@ public class BiDiIFDSSolverTest {
 		
 		backwardHelper.method("bar",
 				startPoints(),
+				normalStmt("y").succ("x"),
 				exitStmt("x").expectArtificalFlow(/*none*/));
 		
 		forwardHelper.runBiDiSolver(backwardHelper, exchange, "b");
@@ -201,6 +222,7 @@ public class BiDiIFDSSolverTest {
 		
 		backwardHelper.method("bar",
 				startPoints(),
+				normalStmt("cs").succ("x"),
 				normalStmt("x").succ("z" /*none*/));
 		
 		forwardHelper.runBiDiSolver(backwardHelper, exchange, "a");

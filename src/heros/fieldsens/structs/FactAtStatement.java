@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Johannes Lerch.
+ * Copyright (c) 2015 Johannes Lerch.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
@@ -8,21 +8,24 @@
  * Contributors:
  *     Johannes Lerch - initial API and implementation
  ******************************************************************************/
-package heros.utilities;
+package heros.fieldsens.structs;
 
-public class Method {
+public class FactAtStatement<Fact, Stmt> {
 
-	public final String name;
-	
-	public Method(String name) {
-		this.name = name;
+	public final Fact fact;
+	public final Stmt stmt;
+
+	public FactAtStatement(Fact fact, Stmt stmt) {
+		this.fact = fact;
+		this.stmt = stmt;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((fact == null) ? 0 : fact.hashCode());
+		result = prime * result + ((stmt == null) ? 0 : stmt.hashCode());
 		return result;
 	}
 
@@ -32,19 +35,19 @@ public class Method {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof Method))
+		if (getClass() != obj.getClass())
 			return false;
-		Method other = (Method) obj;
-		if (name == null) {
-			if (other.name != null)
+		FactAtStatement other = (FactAtStatement) obj;
+		if (fact == null) {
+			if (other.fact != null)
 				return false;
-		} else if (!name.equals(other.name))
+		} else if (!fact.equals(other.fact))
+			return false;
+		if (stmt == null) {
+			if (other.stmt != null)
+				return false;
+		} else if (!stmt.equals(other.stmt))
 			return false;
 		return true;
-	}
-	
-	@Override
-	public String toString() {
-		return "[Method "+name+"]";
 	}
 }
