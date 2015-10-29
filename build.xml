@@ -5,7 +5,6 @@
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="heros">
     <property environment="env"/>
-    <property name="revealdroid.location" value="../revealdroid"/>
     <property name="soot.location" value="../soot"/>
     <property name="soot-infoflow.location" value="../soot-infoflow"/>
     <property name="uic_exploit_gen.location" value="../../../../media/joshua/ext4_backup/home/joshua/workspace/uic_exploit_gen"/>
@@ -14,18 +13,27 @@
     <property name="target" value="1.7"/>
     <property name="source" value="1.7"/>
     <path id="Plug-in Dependencies.libraryclasspath"/>
+    <path id="Maven Dependencies.libraryclasspath">
+        <pathelement location="../../.m2/repository/org/functionaljava/functionaljava/4.2/functionaljava-4.2.jar"/>
+    </path>
     <path id="heros.classpath">
         <path refid="Plug-in Dependencies.libraryclasspath"/>
-        <pathelement location="bin"/>
-        <pathelement location="guava-14.0.1.jar"/>
+        <pathelement location="target/classes"/>
+        <pathelement location="target/test-classes"/>
         <pathelement location="slf4j-api-1.7.5.jar"/>
+        <pathelement location="slf4j-simple-1.7.5.jar"/>
         <pathelement location="junit.jar"/>
         <pathelement location="org.hamcrest.core_1.3.0.jar"/>
+        <pathelement location="mockito-all-1.9.5.jar"/>
+        <path refid="Maven Dependencies.libraryclasspath"/>
+        <pathelement location="guava-18.0.jar"/>
     </path>
     <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
+        <mkdir dir="target/classes"/>
+        <mkdir dir="target/test-classes"/>
+        <copy includeemptydirs="false" todir="target/classes">
             <fileset dir="src">
+                <include name="**/*.java"/>
                 <exclude name="**/*.uad"/>
                 <exclude name="**/*.ucd"/>
                 <exclude name="**/*.uld"/>
@@ -51,7 +59,7 @@
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
-        <copy includeemptydirs="false" todir="bin">
+        <copy includeemptydirs="false" todir="target/test-classes">
             <fileset dir="test">
                 <exclude name="**/*.uad"/>
                 <exclude name="**/*.ucd"/>
@@ -80,26 +88,25 @@
         </copy>
     </target>
     <target name="clean">
-        <delete dir="bin"/>
+        <delete dir="target/classes"/>
+        <delete dir="target/test-classes"/>
     </target>
     <target depends="clean" name="cleanall"/>
     <target depends="build-subprojects,build-project" name="build"/>
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target/classes" includeantruntime="false" source="${source}" target="${target}">
             <src path="src"/>
+            <include name="**/*.java"/>
+            <classpath refid="heros.classpath"/>
+        </javac>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="target/test-classes" includeantruntime="false" source="${source}" target="${target}">
             <src path="test"/>
             <classpath refid="heros.classpath"/>
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
-        <ant antfile="build.xml" dir="${revealdroid.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${revealdroid.location}" inheritAll="false" target="build">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
         <ant antfile="build.xml" dir="${soot.location}" inheritAll="false" target="clean"/>
         <ant antfile="build.xml" dir="${soot.location}" inheritAll="false" target="build">
             <propertyset>
